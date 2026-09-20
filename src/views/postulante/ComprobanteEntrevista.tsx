@@ -1,6 +1,5 @@
-import { useEffect } from 'react'
 import { QRCodeSVG } from 'qrcode.react'
-import { CalendarDays, ExternalLink, MapPin, Printer, QrCode, X } from 'lucide-react'
+import { CalendarDays, ExternalLink, MapPin, Printer, QrCode } from 'lucide-react'
 import type { Comprobante } from '../../lib/comprobante'
 import { urlComprobante } from '../../lib/comprobante'
 import { fechaLargaCap, hora } from '../../lib/format'
@@ -22,7 +21,7 @@ export function ComprobanteEntrevista({ c, imprimible = true }: { c: Comprobante
   const marca = sedePorId(c.sedeId).marca
   const url = urlComprobante(c)
   return (
-    <div className="ticket-wrap mx-auto w-full max-w-[520px]">
+    <div className="comprobante-print ticket-wrap mx-auto w-full max-w-[520px]">
       <article className="ticket saw-bottom pb-4" style={{ ['--notch-y' as string]: '112px' }}>
         <div className="px-5 pt-5">
           <div className="flex items-center justify-between">
@@ -59,9 +58,6 @@ export function ComprobanteEntrevista({ c, imprimible = true }: { c: Comprobante
           <Fila k="Puesto" v={c.puesto} />
           <Fila k="Requisición" v={c.vacanteId} mono />
           <Fila k="Turno" v={c.turno} />
-          <Fila k="Fecha" v={fechaLargaCap(c.fecha)} />
-          <Fila k="Hora" v={hora(c.fecha)} mono />
-          <Fila k="Lugar" v={`${c.sede} (${c.distrito})`} />
           <Fila k="Emitido" v={new Date(c.emitido).toLocaleString('es-PE', { dateStyle: 'medium', timeStyle: 'short' })} mono />
         </dl>
 
@@ -79,27 +75,6 @@ export function ComprobanteEntrevista({ c, imprimible = true }: { c: Comprobante
           </div>
         )}
       </article>
-    </div>
-  )
-}
-
-export function ModalComprobante({ c, onCerrar }: { c: Comprobante; onCerrar: () => void }) {
-  useEffect(() => {
-    const esc = (e: KeyboardEvent) => e.key === 'Escape' && onCerrar()
-    window.addEventListener('keydown', esc)
-    const prev = document.body.style.overflow
-    document.body.style.overflow = 'hidden'
-    return () => {
-      window.removeEventListener('keydown', esc)
-      document.body.style.overflow = prev
-    }
-  }, [onCerrar])
-  return (
-    <div className="fixed inset-0 z-50 overflow-y-auto bg-tinta/50 p-3 sm:p-6" onMouseDown={(e) => e.target === e.currentTarget && onCerrar()}>
-      <div role="dialog" aria-modal="true" aria-label="Comprobante de entrevista" className="relative mx-auto max-w-[540px] pt-10">
-        <button onClick={onCerrar} aria-label="Cerrar comprobante" className="no-print absolute top-0 right-0 flex items-center gap-1 rounded-full border-[1.5px] border-tinta bg-papel px-3 py-1 text-xs font-bold hard-shadow"><X size={14} /> Cerrar</button>
-        <ComprobanteEntrevista c={c} />
-      </div>
     </div>
   )
 }

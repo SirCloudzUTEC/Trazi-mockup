@@ -9,6 +9,7 @@ import { soles } from '../../lib/format'
 import { Button } from '../../components/ui'
 import { TraziMark } from '../../components/TraziMark'
 import type { Marca } from '../../types'
+import { FondoDireccion, MapaSedes } from './FondoDireccion'
 
 const TICK = { fontFamily: 'Space Mono, monospace', fontSize: 11, fill: '#6B5E55' }
 
@@ -79,8 +80,9 @@ export function Direccion() {
   }
 
   return (
-    <div data-theme="direccion" className="min-h-[calc(100vh-64px)] bg-crema">
-      <main className="mx-auto max-w-[1440px] px-4 py-6 sm:px-6 sm:py-8 lg:px-10">
+    <div data-theme="direccion" className="relative min-h-[calc(100vh-64px)] overflow-x-clip bg-crema">
+      <FondoDireccion />
+      <main className="relative z-10 mx-auto max-w-[1440px] px-4 py-6 sm:px-6 sm:py-8 lg:px-10">
         <div className="flex flex-wrap items-start justify-between gap-4">
           <div>
             <p className="text-[11px] font-semibold uppercase tracking-[0.04em] text-espresso-meta">Resumen ejecutivo · Septiembre</p>
@@ -105,8 +107,9 @@ export function Direccion() {
         </div>
 
         <div className="mt-6 grid gap-6 lg:grid-cols-2">
-          <section className="card-exec p-5 sm:p-6">
-            <div className="flex flex-wrap items-center justify-between gap-2">
+          <section className="card-exec relative overflow-hidden p-5 sm:p-6">
+            <MapaSedes porSede={porSede} />
+            <div className="relative z-10 flex flex-wrap items-center justify-between gap-2">
               <h2 className="text-[18px] leading-[26px] font-semibold">Contrataciones por sede</h2>
               <div className="no-print flex gap-1.5">
                 {(['todas', 'PVP', 'VVD'] as const).map((m) => (
@@ -116,7 +119,7 @@ export function Direccion() {
                 ))}
               </div>
             </div>
-            <div className="mt-4" style={{ height: barras.length * 34 + 20 }} role="img" aria-label="Contrataciones por sede este mes">
+            <div className="relative z-10 mt-4" style={{ height: barras.length * 34 + 20 }} role="img" aria-label="Contrataciones por sede este mes">
               <ResponsiveContainer width="100%" height="100%">
                 <BarChart data={barras} layout="vertical" margin={{ left: 0, right: 28, top: 0, bottom: 0 }}>
                   <CartesianGrid horizontal={false} stroke="rgba(43,36,32,0.06)" />

@@ -1,9 +1,9 @@
 import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
 import type { Candidato, CorreoEnviado, Etapa, PlantillaId, Reporte, TraziMensaje } from '../types'
-import { CANDIDATO_PROTAGONISTA_ID, crearCandidatos, sedePorId, VACANTES } from '../data/seed'
+import { crearCandidatos, sedePorId, VACANTES } from '../data/seed'
 import { ETAPA_LABEL } from '../lib/stages'
-import { folio } from '../lib/format'
+import { enDias, folio } from '../lib/format'
 import { armarCorreo, PLANTILLAS } from '../lib/correos'
 
 interface PostularInput {
@@ -11,6 +11,7 @@ interface PostularInput {
   dni: string
   telefono: string
   email: string
+  cv?: string
   vacanteId: string
 }
 
@@ -42,6 +43,7 @@ interface State {
   dismissToast: (id: string) => void
   postular: (i: PostularInput) => string
   moverEtapa: (id: string, etapa: Etapa, nota?: string) => void
+  avanzarPostulacion: (id: string) => void
   enviarCorreo: (i: EnviarInput) => void
   confirmarEntrevista: (id: string) => void
   generarReporte: (i: ReporteInput) => Reporte
@@ -58,7 +60,7 @@ export const useTrazi = create<State>()(
       candidatos: crearCandidatos(),
       correos: [],
       reportes: [],
-      miPostulacionId: CANDIDATO_PROTAGONISTA_ID,
+      miPostulacionId: '',
       toasts: [],
 
       notify: (texto) => {
@@ -80,6 +82,7 @@ export const useTrazi = create<State>()(
           dni: i.dni,
           telefono: i.telefono,
           email: i.email,
+          cv: i.cv,
           vacanteId: vac.id,
           sedeId: vac.sedeId,
           etapa: 'recibido',
@@ -105,6 +108,19 @@ export const useTrazi = create<State>()(
         }))
         const primero = c.nombre.split(' ')[0]
         get().notify(id === get().miPostulacionId ? `Tu postulación avanzó a ${ETAPA_LABEL[etapa]}.` : `${primero} avanzó a ${ETAPA_LABEL[etapa]}.`)
+      },
+
+      /** Avanza la postulación propia a la siguiente etapa (demo en vivo). */
+      avanzarPostulacion: (id) => {
+        const c = get().candidatos.find((x) => x.id === id)
+        if (!c) return
+        const siguiente: Partial<Record<Etapa, Etapa>> = { recibido: 'revision', revision: 'entrevista' }
+        const etapa = siguiente[c.etapa]
+        if (!etapa) return
+        if (etapa === 'entrevista') {
+          set((s) => ({ candidatos: s.candidatos.map((x) => (x.id === id ? { ...x, entrevista: { fecha: enDias(2, 10), sedeId: x.sedeId, confirmada: false } } : x)) }))
+        }
+        get().moverEtapa(id, etapa)
       },
 
       enviarCorreo: ({ ids, plantilla, fecha, sedeId, asunto, cuerpo }) => {
@@ -179,7 +195,7 @@ export const useTrazi = create<State>()(
       elegirPostulacion: (id) => set({ miPostulacionId: id }),
 
       reset: () =>
-        set({ candidatos: crearCandidatos(), correos: [], reportes: [], miPostulacionId: CANDIDATO_PROTAGONISTA_ID, toasts: [] }),
+        set({ candidatos: crearCandidatos(), correos: [], reportes: [], miPostulacionId: '', toasts: [] }),
     }),
     {
       name: 'trazi-demo-v1',

@@ -10,6 +10,7 @@ import { PanelCandidato } from './PanelCandidato'
 import { ModalCorreo } from './ModalCorreo'
 import { PanelReporte } from './PanelReporte'
 import { fechaHora } from '../../lib/format'
+import { FondoRrhh } from './FondoRrhh'
 
 type Tab = 'resumen' | 'pipeline' | 'candidatos' | 'enviados'
 const TABS: { id: Tab; label: string }[] = [
@@ -33,8 +34,9 @@ export function Rrhh() {
   }, [notify])
 
   return (
-    <div data-theme="rrhh" className="min-h-[calc(100vh-64px)] bg-crema">
-      <main className="mx-auto max-w-[1440px] px-4 py-6 sm:px-6 lg:px-10">
+    <div data-theme="rrhh" className="relative min-h-[calc(100vh-64px)] overflow-x-clip bg-crema">
+      <FondoRrhh />
+      <main className="relative z-10 mx-auto max-w-[1440px] px-4 pt-6 pb-8 sm:px-6 lg:px-10 lg:pt-14">
         <div className="mb-5 flex flex-wrap items-end justify-between gap-3">
           <div>
             <h1 className="text-[28px] leading-9 font-bold sm:text-[36px] sm:leading-[44px]">Panel de reclutamiento</h1>

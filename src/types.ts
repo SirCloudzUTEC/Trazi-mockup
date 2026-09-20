@@ -38,6 +38,8 @@ export interface Candidato {
   dni: string
   telefono: string
   email: string
+  /** Nombre del CV adjuntado en el formulario (simulado). */
+  cv?: string
   vacanteId: string
   sedeId: string
   etapa: Etapa
