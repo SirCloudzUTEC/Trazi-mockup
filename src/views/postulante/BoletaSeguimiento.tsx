@@ -7,7 +7,8 @@ import { fechaLarga, hora } from '../../lib/format'
 import { BrandFlag, Stamp, TicketButton } from '../../components/ui'
 import { TraziAvatar, TraziPunto } from '../../components/TraziAyuda'
 import { comprobanteDe } from '../../lib/comprobante'
-import { ModalComprobante, SeccionComprobante } from './ComprobanteEntrevista'
+import { SeccionComprobante } from './ComprobanteEntrevista'
+import { ModalComprobante } from './ImpresoraComprobante'
 import { useTrazi } from '../../store/useTrazi'
 
 const SELLO: Record<Etapa, string> = {
