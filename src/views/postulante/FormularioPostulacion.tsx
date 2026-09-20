@@ -5,6 +5,8 @@ import { sedePorId } from '../../data/seed'
 import { BrandFlag, TicketButton } from '../../components/ui'
 import { TraziPunto } from '../../components/TraziAyuda'
 import { soles } from '../../lib/format'
+import { HeroSeccion } from './HeroSeccion'
+import { Gondola } from './FondoInicio'
 
 interface Props {
   vacante: Vacante
@@ -53,21 +55,24 @@ export function FormularioPostulacion({ vacante, onVolver, onEnviar }: Props) {
   const err = (k: keyof typeof errores) => intento && errores[k] && <p className="mt-1 font-mono text-[11px] text-rojo-fuerte">{errores[k]}</p>
 
   return (
-    <div className="mx-auto max-w-[760px]">
+    <section>
       <button onClick={onVolver} className="mb-4 flex items-center gap-1.5 font-mono text-xs font-bold uppercase tracking-[0.04em] text-umbra hover:text-rojo">
         <ArrowLeft size={14} /> Volver a las ofertas
       </button>
-      <div className="ticket-wrap">
+      <HeroSeccion
+        eyebrow={`Postulación · ${vacante.id}`}
+        titulo={<>Postula a {vacante.titulo}</>}
+        tituloNube="Solo 2 minutos"
+        mensaje={<>Completa tus datos y listo. Toca la carita con <b>«?»</b> junto a cada campo si necesitas ayuda.</>}
+        franja={[sede.nombre, vacante.turno, `${soles(vacante.tarifaHora, 2)}/h`]}
+      >
+        <BrandFlag marca={sede.marca} />
+      </HeroSeccion>
+      <Gondola titulo="Mostrador · Llena tu boleta" />
+      <div className="ticket-wrap mx-auto mt-8 max-w-[760px]">
         <form onSubmit={enviar} noValidate className="ticket p-5 sm:p-7" style={{ ['--notch-y' as string]: `${notchY}px` }}>
-          <div className="flex items-start justify-between gap-3">
-            <div>
-              <BrandFlag marca={sede.marca} />
-              <h2 className="mt-2 text-[24px] leading-8 font-bold sm:text-[32px] sm:leading-10">Postula a {vacante.titulo}</h2>
-              <p className="font-mono text-xs uppercase tracking-[0.04em] text-umbra">
-                {vacante.id} · {sede.nombre} · {vacante.turno} · {soles(vacante.tarifaHora, 2)}/h
-              </p>
-            </div>
-          </div>
+          <p className="font-mono text-[11px] font-bold uppercase tracking-[0.06em] text-umbra">Formulario de postulación</p>
+          <h2 className="mt-1 text-[24px] leading-8 font-bold sm:text-[28px] sm:leading-9">Cuéntanos sobre ti</h2>
           <div className="tear mt-6 mb-5" />
           <div className="grid gap-4 sm:grid-cols-2">
             <div className="sm:col-span-2">
@@ -114,6 +119,7 @@ export function FormularioPostulacion({ vacante, onVolver, onEnviar }: Props) {
           </div>
         </form>
       </div>
-    </div>
+      <Gondola titulo="Caja · Revisa tus datos antes de enviar" />
+    </section>
   )
 }

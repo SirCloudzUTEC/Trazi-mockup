@@ -6,7 +6,10 @@ import { JobReceiptCard } from './JobReceiptCard'
 import { FormularioPostulacion } from './FormularioPostulacion'
 import { BoletaSeguimiento } from './BoletaSeguimiento'
 import { Perfil } from './Perfil'
-import { TraziAyuda } from '../../components/TraziAyuda'
+import { FondoInicio, Gondola } from './FondoInicio'
+import { HeroInicio } from './HeroInicio'
+import { HeroSeccion } from './HeroSeccion'
+import { ETAPA_LABEL } from '../../lib/stages'
 
 type Vista = 'ofertas' | 'form' | 'boleta' | 'perfil'
 
@@ -42,8 +45,9 @@ export function Postulante() {
   const tabActiva: Vista = vista === 'form' ? 'ofertas' : vista
 
   return (
-    <div data-theme="postulante" className="min-h-[calc(100vh-64px)] bg-crema">
-      <main className="mx-auto max-w-[1160px] px-4 py-6 sm:px-6 sm:py-8 lg:px-10">
+    <div data-theme="postulante" className="relative min-h-[calc(100vh-64px)] overflow-x-clip bg-crema">
+      <FondoInicio />
+      <main className="relative z-10 mx-auto max-w-[1160px] px-4 py-6 sm:px-6 sm:py-8 lg:px-10">
         <nav className="mb-6 flex gap-2 overflow-x-auto" aria-label="Secciones">
           {TABS.map((t) => (
             <button
@@ -59,19 +63,10 @@ export function Postulante() {
 
         {vista === 'ofertas' && (
           <section>
-            <h1 className="max-w-2xl text-[30px] leading-9 font-extrabold sm:text-[40px] sm:leading-[48px]">
-              Tu primer paso en <span className="text-rojo">Plaza Vea</span> y Vivanda empieza aquí.
-            </h1>
-            <p className="mt-2 max-w-xl text-on-surface-variant" style={{ color: '#59413b' }}>
-              Elige una vacante, postula en 2 minutos y sigue tu proceso con tu boleta de postulación.
-            </p>
-            <div className="mt-5 max-w-xl">
-              <TraziAyuda titulo="Hola, soy Trazi">
-                Filtra por <b>sede</b> para ver las tiendas más cerca de ti. Las vacantes con «Sin experiencia previa» son ideales para tu primer empleo.
-              </TraziAyuda>
-            </div>
+            <HeroInicio onVer={() => document.getElementById('vacantes')?.scrollIntoView({ behavior: 'smooth', block: 'start' })} />
+            <Gondola titulo="Pasillo 01 · Vacantes abiertas" />
 
-            <div className="mt-6 flex flex-wrap items-center gap-2">
+            <div id="vacantes" className="mt-8 flex scroll-mt-24 flex-wrap items-center gap-2">
               {(['todas', 'PVP', 'VVD'] as const).map((m) => (
                 <button key={m} onClick={() => setMarca(m)} className={`${chipBase} ${marca === m ? 'bg-miel' : 'bg-papel hover:bg-chip'}`}>
                   {m === 'todas' ? 'Todas las marcas' : m === 'PVP' ? 'Plaza Vea' : 'Vivanda'}
@@ -109,6 +104,7 @@ export function Postulante() {
                 ))}
               </div>
             )}
+            <Gondola titulo="Fin del pasillo · ¡Gracias por visitar Trazi!" />
           </section>
         )}
 
@@ -126,15 +122,20 @@ export function Postulante() {
 
         {vista === 'boleta' && actual && (
           <section>
-            <div className="mb-5 flex flex-wrap items-center justify-between gap-3">
-              <h1 className="text-[24px] leading-8 font-bold sm:text-[32px] sm:leading-10">Mi postulación</h1>
+            <HeroSeccion
+              eyebrow="Seguimiento · Boleta de postulación"
+              titulo="Mi postulación"
+              tituloNube="Así vas"
+              mensaje={<>Aquí ves en qué etapa está tu proceso. Toca el <b>«?»</b> junto a <b>Postulación</b> si tienes dudas sobre los sellos.</>}
+              franja={[actual.folio, ETAPA_LABEL[actual.etapa], `${VACANTES.find((v) => v.id === actual.vacanteId)?.titulo ?? ''} · ${sedePorId(actual.sedeId).distrito}`]}
+            >
               {mias.length > 1 && (
-                <label className="flex items-center gap-2 font-mono text-xs font-bold uppercase tracking-[0.04em]">
+                <label className="flex flex-wrap items-center gap-2 font-mono text-xs font-bold uppercase tracking-[0.04em]">
                   Ver
                   <select
                     value={actual.id}
                     onChange={(e) => elegirPostulacion(e.target.value)}
-                    className="rounded-[4px] border-[1.5px] border-tinta bg-papel px-2 py-1.5 normal-case"
+                    className="max-w-full rounded-[4px] border-[1.5px] border-tinta bg-papel px-2 py-1.5 normal-case"
                   >
                     {mias.map((m) => (
                       <option key={m.id} value={m.id}>{m.propia ? `Mi nueva postulación (${m.folio})` : `Demo: ${m.nombre.split(' ')[0]} (${m.folio})`}</option>
@@ -142,12 +143,16 @@ export function Postulante() {
                   </select>
                 </label>
               )}
-            </div>
+            </HeroSeccion>
+            <Gondola titulo="Tu recorrido · Cada sello cuenta" />
+            <div className="mt-8">
             <BoletaSeguimiento c={actual} />
+            </div>
+            <Gondola titulo="Caja 1 · Gracias por postular" />
           </section>
         )}
 
-        {vista === 'perfil' && actual && <Perfil c={actual} />}
+        {vista === 'perfil' && actual && <Perfil c={actual} onVerPostulacion={() => setVista('boleta')} />}
       </main>
     </div>
   )

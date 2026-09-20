@@ -23,13 +23,17 @@ export function TraziAvatar({ pose = 'saluda', size = 44, className = '' }: { po
 }
 
 /** Nube de ayuda con cola: texto corto dicho por Trazi. */
-function Nube({ children, cola = 'izquierda', lado = 'izquierda', className = '' }: { children: React.ReactNode; cola?: 'izquierda' | 'arriba'; lado?: 'izquierda' | 'derecha'; className?: string }) {
+export function Nube({ children, cola = 'izquierda', lado = 'izquierda', className = '' }: { children: React.ReactNode; cola?: 'izquierda' | 'arriba' | 'abajo'; lado?: 'izquierda' | 'derecha'; className?: string }) {
   return (
     <div className={`relative rounded-2xl border-[1.5px] border-tinta bg-papel px-3.5 py-2.5 text-sm leading-snug shadow-[3px_3px_0_#2B2420] ${className}`}>
       <span
         aria-hidden
         className={`absolute h-3 w-3 rotate-45 border-tinta bg-papel ${
-          cola === 'izquierda' ? '-left-[7px] top-4 border-b-[1.5px] border-l-[1.5px]' : `-top-[7px] border-t-[1.5px] border-l-[1.5px] ${lado === 'izquierda' ? 'left-3' : 'right-3'}`
+          cola === 'izquierda'
+            ? '-left-[7px] top-4 border-b-[1.5px] border-l-[1.5px]'
+            : cola === 'abajo'
+              ? '-bottom-[7px] left-1/2 -ml-1.5 border-r-[1.5px] border-b-[1.5px]'
+              : `-top-[7px] border-t-[1.5px] border-l-[1.5px] ${lado === 'izquierda' ? 'left-3' : 'right-3'}`
         }`}
       />
       {children}

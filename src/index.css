@@ -89,6 +89,45 @@ button { font-family: inherit; cursor: pointer; }
 
 .scroll-x { overflow-x: auto; scrollbar-width: thin; }
 
+/* Mini impresora térmica: leve vibración y LED mientras el papel avanza (el avance lo controla el componente). */
+@keyframes printer-jitter {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(0.7px) translateY(0.3px); }
+  75% { transform: translateX(-0.7px); }
+}
+@keyframes led-blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.25; }
+}
+.impresora-trabajando { animation: printer-jitter 0.14s linear infinite; }
+.led-trabajando { animation: led-blink 0.5s ease-in-out infinite; }
+@keyframes printer-chop {
+  0%, 100% { transform: translateY(0); }
+  35% { transform: translateY(4px); }
+}
+@keyframes cut-line {
+  from { transform: scaleX(0); opacity: 1; }
+  75% { opacity: 1; }
+  to { transform: scaleX(1); opacity: 0; }
+}
+@keyframes cut-scissors {
+  from { left: 0; opacity: 1; }
+  85% { opacity: 1; }
+  to { left: 100%; opacity: 0; }
+}
+.impresora-corta { animation: printer-chop 0.28s ease-out 1; }
+/* Borde superior dentado del papel ya cortado (deja pasar la sombra a los lados y abajo). */
+.saw-top { clip-path: polygon(-12px 16px, 0% 16px, 2.5% 22px, 5% 16px, 7.5% 22px, 10% 16px, 12.5% 22px, 15% 16px, 17.5% 22px, 20% 16px, 22.5% 22px, 25% 16px, 27.5% 22px, 30% 16px, 32.5% 22px, 35% 16px, 37.5% 22px, 40% 16px, 42.5% 22px, 45% 16px, 47.5% 22px, 50% 16px, 52.5% 22px, 55% 16px, 57.5% 22px, 60% 16px, 62.5% 22px, 65% 16px, 67.5% 22px, 70% 16px, 72.5% 22px, 75% 16px, 77.5% 22px, 80% 16px, 82.5% 22px, 85% 16px, 87.5% 22px, 90% 16px, 92.5% 22px, 95% 16px, 97.5% 22px, 100% 16px, calc(100% + 12px) 16px, calc(100% + 12px) calc(100% + 12px), -12px calc(100% + 12px)); }
+@keyframes dot-ping {
+  from { transform: scale(1); opacity: 0.6; }
+  to { transform: scale(2.8); opacity: 0; }
+}
+.dot-ping { transform-box: fill-box; transform-origin: center; animation: dot-ping 1.8s ease-out infinite; }
+@media (prefers-reduced-motion: reduce) {
+  .dot-ping { animation: none; opacity: 0; }
+  .impresora-trabajando, .led-trabajando, .impresora-corta { animation: none; }
+}
+
 @media print {
   .no-print { display: none !important; }
   body { background: #fff; }
