@@ -13,6 +13,8 @@ const ESCALA_MAX_FINAL = 1.3
 const CINTA = 'repeating-linear-gradient(-45deg, #E4572E 0 10px, #FFFBF3 10px 20px)'
 const CURVA_ACERCA = 'cubic-bezier(0.22, 0.9, 0.3, 1.06)'
 
+const esAngosto = () => window.innerWidth < 640
+
 /** Avance del papel: arranca suave, va constante y frena al final. */
 const suave = (p: number) => 0.5 - Math.cos(Math.PI * p) / 2
 /** El papel baja por la ranura: al inicio está todo arriba (oculto) y termina con el encabezado junto a la impresora. */
@@ -56,7 +58,8 @@ export function ModalComprobante({ c, onCerrar }: { c: Comprobante; onCerrar: ()
     if (!bloque) return
     const ajustar = () => {
       const alto = bloque.offsetHeight
-      const escala = Math.max(ESCALA_MIN, Math.min(1, (window.innerHeight - 120) / alto))
+      // En pantallas angostas no se encoge: la boleta se lee a tamaño real y el modal se desplaza.
+      const escala = esAngosto() ? 1 : Math.max(ESCALA_MIN, Math.min(1, (window.innerHeight - 120) / alto))
       escalaRef.current = escala
       setMedida({ escala, alto: alto * escala })
     }
@@ -75,7 +78,9 @@ export function ModalComprobante({ c, onCerrar }: { c: Comprobante; onCerrar: ()
     const imp = impresoraRef.current
     const sal = salidaRef.current
     if (!imp || !sal) return null
-    const cabe = Math.min(ESCALA_MAX_FINAL, (window.innerHeight - 110) / sal.offsetHeight, (window.innerWidth - 24) / sal.offsetWidth)
+    const cabe = esAngosto()
+      ? Math.min(1, (window.innerWidth - 24) / sal.offsetWidth)
+      : Math.min(ESCALA_MAX_FINAL, (window.innerHeight - 110) / sal.offsetHeight, (window.innerWidth - 24) / sal.offsetWidth)
     const escala = Math.max(escalaRef.current, cabe)
     return { escala, ty: -(imp.offsetHeight - 12) * escala, alto: sal.offsetHeight * escala }
   }
@@ -159,7 +164,7 @@ export function ModalComprobante({ c, onCerrar }: { c: Comprobante; onCerrar: ()
   const estado = fase === 'imprimiendo' ? 'IMPRIMIENDO…' : fase === 'corte' ? 'CORTANDO…' : 'LISTO · TOMA TU BOLETA'
 
   return createPortal(
-    <div ref={scrollRef} className="fixed inset-0 z-50 overflow-y-auto bg-tinta/55 p-3 sm:p-6" onMouseDown={(e) => e.target === e.currentTarget && onCerrar()}>
+    <div ref={scrollRef} className="modal-comprobante fixed inset-0 z-50 overflow-y-auto bg-tinta/55 p-3 sm:p-6" onMouseDown={(e) => e.target === e.currentTarget && onCerrar()}>
       <div role="dialog" aria-modal="true" aria-label="Impresión del comprobante de entrevista" className="relative mx-auto max-w-[580px] pt-10">
         <button onClick={onCerrar} aria-label="Cerrar comprobante" className="no-print hard-shadow absolute top-0 right-0 z-20 flex items-center gap-1 rounded-full border-[1.5px] border-tinta bg-papel px-3 py-1 text-xs font-bold"><X size={14} /> Cerrar</button>
         <button
@@ -171,9 +176,10 @@ export function ModalComprobante({ c, onCerrar }: { c: Comprobante; onCerrar: ()
         </button>
         <p className="sr-only" role="status" aria-live="polite">{estado}</p>
 
-        <div style={{ height: retirada ? final.alto : medida?.alto }}>
+        <div className="print-reset" style={{ height: retirada ? final.alto : medida?.alto }}>
           <div
             ref={bloqueRef}
+            className="print-reset"
             style={{
               transform: retirada ? `translateY(${final.ty}px) scale(${final.escala})` : `scale(${medida?.escala ?? 1})`,
               transformOrigin: 'top center',
@@ -185,7 +191,7 @@ export function ModalComprobante({ c, onCerrar }: { c: Comprobante; onCerrar: ()
             {/* Impresora: al terminar de cortar se retira hacia arriba */}
             <div
               ref={impresoraRef}
-              className="relative z-10"
+              className="no-print relative z-10"
               style={{
                 transform: retirada ? 'translateY(-135%)' : 'translateY(0)',
                 opacity: retirada ? 0 : 1,
@@ -222,7 +228,7 @@ export function ModalComprobante({ c, onCerrar }: { c: Comprobante; onCerrar: ()
             </div>
 
             {/* Papel saliendo bajo la ranura */}
-            <div ref={salidaRef} className="relative z-0 -mt-3 overflow-hidden px-3 sm:px-6">
+            <div ref={salidaRef} className="print-salida relative z-0 -mt-3 overflow-hidden px-3 sm:px-6">
               {fase === 'corte' && (
                 <div aria-hidden className="pointer-events-none absolute inset-x-3 top-[18px] z-10 sm:inset-x-6">
                   <span className="absolute inset-x-0 top-0 h-[3px] origin-left rounded bg-tinta" style={{ animation: `cut-line ${CORTE_MS}ms ease-in-out forwards` }} />
@@ -232,7 +238,7 @@ export function ModalComprobante({ c, onCerrar }: { c: Comprobante; onCerrar: ()
               <div
                 ref={papelRef}
                 key={corrida}
-                className={`pt-4 pb-3 ${cortado ? 'saw-top' : ''}`}
+                className={`print-papel pt-4 pb-3 ${cortado ? 'saw-top' : ''}`}
                 style={{ willChange: 'transform', opacity: fase === 'volviendo' ? 0 : 1, transition: 'opacity 350ms ease-out' }}
               >
                 <ComprobanteEntrevista c={c} />

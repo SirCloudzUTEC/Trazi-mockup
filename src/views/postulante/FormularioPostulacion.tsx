@@ -11,7 +11,7 @@ import { Gondola } from './FondoInicio'
 interface Props {
   vacante: Vacante
   onVolver: () => void
-  onEnviar: (d: { nombre: string; dni: string; telefono: string; email: string }) => void
+  onEnviar: (d: { nombre: string; dni: string; telefono: string; email: string; cv?: string }) => void
 }
 
 const campo =
@@ -49,7 +49,7 @@ export function FormularioPostulacion({ vacante, onVolver, onEnviar }: Props) {
     e.preventDefault()
     setIntento(true)
     if (!ok) return
-    onEnviar({ ...v, telefono: v.telefono.replace(/\s/g, '') })
+    onEnviar({ ...v, telefono: v.telefono.replace(/\s/g, ''), cv: cv ?? undefined })
   }
 
   const err = (k: keyof typeof errores) => intento && errores[k] && <p className="mt-1 font-mono text-[11px] text-rojo-fuerte">{errores[k]}</p>

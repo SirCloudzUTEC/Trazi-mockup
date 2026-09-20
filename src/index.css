@@ -128,7 +128,21 @@ button { font-family: inherit; cursor: pointer; }
   .impresora-trabajando, .led-trabajando, .impresora-corta { animation: none; }
 }
 
+@page { margin: 10mm; }
 @media print {
   .no-print { display: none !important; }
-  body { background: #fff; }
+  html, body { background: #fff !important; overflow: visible !important; height: auto !important; }
+  * { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+
+  /* Comprobante abierto en el modal de la impresora: se imprime solo la boleta, en una hoja, sin escalas ni animaciones. */
+  body:has(.modal-comprobante) > #root { display: none !important; }
+  .modal-comprobante { position: static !important; overflow: visible !important; background: none !important; padding: 0 !important; }
+  .modal-comprobante [role="dialog"] { max-width: none !important; padding: 0 !important; }
+  .modal-comprobante .print-reset { height: auto !important; transform: none !important; filter: none !important; visibility: visible !important; transition: none !important; }
+  .modal-comprobante .print-papel { transform: none !important; opacity: 1 !important; padding: 0 !important; clip-path: none !important; }
+  .modal-comprobante .print-salida { margin: 0 !important; padding: 0 !important; overflow: visible !important; }
+
+  /* La boleta nunca se parte en dos hojas; si el contenido no cabe, se reduce un poco. */
+  .comprobante-print { break-inside: avoid; page-break-inside: avoid; max-width: 480px !important; margin: 0 auto !important; zoom: 0.92; }
+  .comprobante-print .ticket { -webkit-mask: none !important; mask: none !important; }
 }

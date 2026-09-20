@@ -21,7 +21,7 @@ export function ComprobanteEntrevista({ c, imprimible = true }: { c: Comprobante
   const marca = sedePorId(c.sedeId).marca
   const url = urlComprobante(c)
   return (
-    <div className="ticket-wrap mx-auto w-full max-w-[520px]">
+    <div className="comprobante-print ticket-wrap mx-auto w-full max-w-[520px]">
       <article className="ticket saw-bottom pb-4" style={{ ['--notch-y' as string]: '112px' }}>
         <div className="px-5 pt-5">
           <div className="flex items-center justify-between">

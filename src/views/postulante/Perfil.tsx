@@ -30,7 +30,7 @@ export function Perfil({ c, onVerPostulacion }: { c: Candidato; onVerPostulacion
               <div className={fila}><Phone size={16} className="text-umbra" /><span className="font-mono text-sm">{c.telefono}</span></div>
               <div className={fila}><Mail size={16} className="text-umbra" /><span className="text-sm">{c.email}</span></div>
               <div className={fila}><MapPin size={16} className="text-umbra" /><span className="text-sm">Sede de interés: {sede.nombre}</span></div>
-              <div className={fila}><FileText size={16} className="text-umbra" /><span className="font-mono text-sm">CV_{c.nombre.split(' ')[0]}.pdf</span></div>
+              <div className={fila}><FileText size={16} className="text-umbra" /><span className="font-mono text-sm">{c.cv ?? 'Sin CV adjunto'}</span></div>
             </div>
           </div>
         </div>

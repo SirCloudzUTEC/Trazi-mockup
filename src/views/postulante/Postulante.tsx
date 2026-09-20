@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { useTrazi } from '../../store/useTrazi'
 import { SEDES, VACANTES, sedePorId } from '../../data/seed'
 import type { Marca } from '../../types'
@@ -10,6 +10,7 @@ import { FondoInicio, Gondola } from './FondoInicio'
 import { HeroInicio } from './HeroInicio'
 import { HeroSeccion } from './HeroSeccion'
 import { ETAPA_LABEL } from '../../lib/stages'
+import { TicketButton } from '../../components/ui'
 
 type Vista = 'ofertas' | 'form' | 'boleta' | 'perfil'
 
@@ -21,8 +22,23 @@ const TABS: { id: Vista; label: string }[] = [
 
 const chipBase = 'rounded-full border-[1.5px] border-tinta px-3 py-1 text-sm font-semibold transition'
 
+function SinPostulacion({ onVer }: { onVer: () => void }) {
+  return (
+    <section className="mx-auto max-w-[520px] py-10">
+      <div className="ticket-wrap">
+        <div className="ticket p-6 text-center" style={{ mask: 'none', WebkitMask: 'none' } as React.CSSProperties}>
+          <p className="font-mono text-[11px] font-bold uppercase tracking-[0.06em] text-umbra">Mi postulación</p>
+          <h2 className="mt-1 text-[24px] leading-8 font-bold">Aún no has postulado</h2>
+          <p className="mt-2 text-sm text-umbra">Elige una vacante y completa el formulario. Cuando lo envíes, aquí verás cómo avanza tu proceso.</p>
+          <TicketButton onClick={onVer} className="mt-5 w-full">Ver ofertas</TicketButton>
+        </div>
+      </div>
+    </section>
+  )
+}
+
 export function Postulante() {
-  const { candidatos, miPostulacionId, elegirPostulacion, postular } = useTrazi()
+  const { candidatos, miPostulacionId, elegirPostulacion, postular, avanzarPostulacion } = useTrazi()
   const [vista, setVista] = useState<Vista>('ofertas')
   const [vacanteId, setVacanteId] = useState<string | null>(null)
   const [marca, setMarca] = useState<Marca | 'todas'>('todas')
@@ -39,8 +55,17 @@ export function Postulante() {
     [marca, turno, sinExp, sedeId],
   )
 
-  const mias = candidatos.filter((c) => c.id === 'c-482' || c.propia)
-  const actual = candidatos.find((c) => c.id === miPostulacionId) ?? mias[0]
+  const mias = candidatos.filter((c) => c.propia)
+  const actual = mias.find((c) => c.id === miPostulacionId) ?? mias[0]
+  const actualId = actual?.id
+  const enCurso = !!actual && (actual.etapa === 'recibido' || actual.etapa === 'revision')
+
+  // Demo en vivo: la postulación propia avanza una etapa cada 3 segundos.
+  useEffect(() => {
+    if (!actualId || !enCurso) return
+    const t = setTimeout(() => avanzarPostulacion(actualId), 3000)
+    return () => clearTimeout(t)
+  }, [actualId, enCurso, actual?.etapa, avanzarPostulacion])
   const vacante = VACANTES.find((v) => v.id === vacanteId)
   const tabActiva: Vista = vista === 'form' ? 'ofertas' : vista
 
@@ -120,6 +145,8 @@ export function Postulante() {
           />
         )}
 
+        {(vista === 'boleta' || vista === 'perfil') && !actual && <SinPostulacion onVer={() => setVista('ofertas')} />}
+
         {vista === 'boleta' && actual && (
           <section>
             <HeroSeccion
@@ -138,7 +165,7 @@ export function Postulante() {
                     className="max-w-full rounded-[4px] border-[1.5px] border-tinta bg-papel px-2 py-1.5 normal-case"
                   >
                     {mias.map((m) => (
-                      <option key={m.id} value={m.id}>{m.propia ? `Mi nueva postulación (${m.folio})` : `Demo: ${m.nombre.split(' ')[0]} (${m.folio})`}</option>
+                      <option key={m.id} value={m.id}>{`${VACANTES.find((v) => v.id === m.vacanteId)?.titulo ?? 'Postulación'} · ${m.folio}`}</option>
                     ))}
                   </select>
                 </label>
