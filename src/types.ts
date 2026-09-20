@@ -44,6 +44,8 @@ export interface Candidato {
   fechaEtapa: string
   entrevista?: Entrevista
   historial: EventoHistorial[]
+  /** Postulación creada por el usuario en esta demo (no del seed). */
+  propia?: boolean
 }
 
 export type PlantillaId = 'recibida' | 'revision' | 'entrevista' | 'oferta' | 'rechazo'

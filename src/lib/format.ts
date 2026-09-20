@@ -45,3 +45,8 @@ export function folio(n: number, marca: 'PVP' | 'VVD'): string {
 export function inputDate(iso: string): string {
   return iso.slice(0, 10)
 }
+
+export function fechaLargaCap(iso: string): string {
+  const t = fechaLarga(iso)
+  return t.charAt(0).toUpperCase() + t.slice(1)
+}
