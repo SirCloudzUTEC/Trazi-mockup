@@ -100,7 +100,7 @@ export function Direccion() {
         </section>
 
         <div className="-mx-4 mt-6 flex snap-x gap-4 overflow-x-auto px-4 pb-1 sm:mx-0 sm:grid sm:grid-cols-2 sm:overflow-visible sm:px-0 xl:grid-cols-4">
-          <Kpi label="Costo por contratación" valor={soles(mesActual.costo)} cambio={dCosto} bueno={dCosto <= 0} nota="vs. mes anterior" />
+          <Kpi label="Costo por contratación" valor={soles(mesActual.costo, 2)} cambio={dCosto} bueno={dCosto <= 0} nota="vs. mes anterior" />
           <Kpi label="Tiempo promedio" valor={`${mesActual.dias} días`} cambio={pct(mesActual.dias, mesPrevio.dias)} bueno nota="vs. mes anterior" />
           <Kpi label="Contrataciones del mes" valor={String(total)} cambio={dContr} bueno={dContr >= 0} nota="vs. mes anterior" />
           <Kpi label="Abandono del proceso" valor={`${mesActual.abandono}%`} cambio={pct(mesActual.abandono, mesPrevio.abandono)} bueno nota="vs. mes anterior" />
@@ -150,8 +150,8 @@ export function Direccion() {
                 <LineChart data={datosSerie} margin={{ left: 0, right: 12, top: 8, bottom: 0 }}>
                   <CartesianGrid vertical={false} stroke="rgba(43,36,32,0.06)" />
                   <XAxis dataKey="mes" tick={TICK} axisLine={false} tickLine={false} />
-                  <YAxis tick={TICK} axisLine={false} tickLine={false} width={48} domain={serie === 'costo' ? [2200, 2900] : ['dataMin - 10', 'dataMax + 10']} tickFormatter={(v) => (serie === 'costo' ? `S/${v}` : String(v))} />
-                  <Tooltip formatter={(v) => [serie === 'costo' ? soles(Number(v)) : `${v} contrataciones`, '']} separator="" />
+                  <YAxis tick={TICK} axisLine={false} tickLine={false} width={48} domain={serie === 'costo' ? [100, 130] : ['dataMin - 10', 'dataMax + 10']} tickFormatter={(v) => (serie === 'costo' ? `S/${v}` : String(v))} />
+                  <Tooltip formatter={(v) => [serie === 'costo' ? soles(Number(v), 2) : `${v} contrataciones`, '']} separator="" />
                   <Line type="monotone" dataKey="valor" stroke={serie === 'costo' ? '#3A7D63' : '#E4572E'} strokeWidth={2.5} dot={{ r: 4, strokeWidth: 0, fill: serie === 'costo' ? '#3A7D63' : '#E4572E' }} />
                 </LineChart>
               </ResponsiveContainer>

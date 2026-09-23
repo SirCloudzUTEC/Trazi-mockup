@@ -123,12 +123,12 @@ export interface MesMetricas {
 
 // Últimos 6 meses (ficticios). El mes actual suma en vivo las contrataciones que RRHH confirme en la demo.
 export const HISTORICO: MesMetricas[] = [
-  { mes: 'Abr', contrataciones: 58, costo: 2780, dias: 21, abandono: 13, porSede: { PVP: 41, VVD: 17 } },
-  { mes: 'May', contrataciones: 61, costo: 2710, dias: 20, abandono: 12, porSede: { PVP: 43, VVD: 18 } },
-  { mes: 'Jun', contrataciones: 66, costo: 2650, dias: 20, abandono: 12, porSede: { PVP: 46, VVD: 20 } },
-  { mes: 'Jul', contrataciones: 70, costo: 2590, dias: 19, abandono: 11, porSede: { PVP: 49, VVD: 21 } },
-  { mes: 'Ago', contrataciones: 74, costo: 2660, dias: 18, abandono: 10, porSede: { PVP: 51, VVD: 23 } },
-  { mes: 'Sep', contrataciones: 77, costo: 2450, dias: 17, abandono: 9, porSede: { PVP: 53, VVD: 24 } },
+  { mes: 'Abr', contrataciones: 58, costo: 123.28, dias: 21, abandono: 13, porSede: { PVP: 41, VVD: 17 } },
+  { mes: 'May', contrataciones: 61, costo: 120.18, dias: 20, abandono: 12, porSede: { PVP: 43, VVD: 18 } },
+  { mes: 'Jun', contrataciones: 66, costo: 117.52, dias: 20, abandono: 12, porSede: { PVP: 46, VVD: 20 } },
+  { mes: 'Jul', contrataciones: 70, costo: 114.86, dias: 19, abandono: 11, porSede: { PVP: 49, VVD: 21 } },
+  { mes: 'Ago', contrataciones: 74, costo: 117.96, dias: 18, abandono: 10, porSede: { PVP: 51, VVD: 23 } },
+  { mes: 'Sep', contrataciones: 77, costo: 108.65, dias: 17, abandono: 9, porSede: { PVP: 53, VVD: 24 } },
 ]
 
 /** Contrataciones del mes actual por sede (base ficticia). */
